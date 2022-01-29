@@ -28,16 +28,14 @@
 
         public bool MakeGuess(string guess)
         {
-            guess = guess.ToLower();
-
-            if (!Words.Values.Contains(guess))
+            if (!Words.AllWords.Contains(guess.ToLower()))
                 return false;
+
+            IsCorrect = Word == guess.ToUpper();
+            GuessCount++;
 
             var result = GetResult(guess);
             PreviousGuesses.Add(result);
-
-            GuessCount++;
-            IsCorrect = Word == guess.ToUpper();
             return true;
         }
         

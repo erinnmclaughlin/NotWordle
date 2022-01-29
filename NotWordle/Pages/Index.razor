@@ -13,7 +13,7 @@
                 <GuessRow GuessResult="guess" />
             }
 
-            @if (GameManager.IsCorrect == false || GameManager.GameOver == false)
+            @if (GameManager.GuessesLeft != 0)
             {
                <InputRow Guess="@Guess.Value" />
             }
@@ -54,7 +54,9 @@
     {
         if (Guess.Value.Length != 5) return;
 
-        if (GameManager.MakeGuess(Guess.Value))
+        var validWord = GameManager.MakeGuess(Guess.Value);
+
+        if (validWord)
             Guess = new();
     }
 
