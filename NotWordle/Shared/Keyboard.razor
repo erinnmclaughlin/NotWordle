@@ -1,0 +1,64 @@
+﻿<div id="keyboard">
+    <div class="row">
+        @foreach (var letter in row1)
+        {
+            <button data-state="@GetState(letter)" class="fade" @onclick="() => GuessLetter(letter)">@letter</button>
+        }
+    </div>
+    
+    <div class="row">
+        <div class="spacer half"></div>
+        @foreach (var letter in row2)
+        {            
+            <button data-state="@GetState(letter)" class="fade" @onclick="() => GuessLetter(letter)">@letter</button>
+        }
+        <div class="spacer half"></div>
+    </div>
+    
+    <div class="row">
+        <button class="one-and-a-half" @onclick="OnSubmit">ENTR</button>
+         @foreach (var letter in row3)
+         {            
+            <button data-state="@GetState(letter)" class="fade" @onclick="() => GuessLetter(letter)">@letter</button>
+        }
+        <button class="one-and-a-half" @onclick="OnBackspace">
+            BKSP
+        </button>
+    </div>
+</div>
+
+@code {
+
+    [Parameter, EditorRequired] 
+    public GameManager Game { get; set; } = null!;
+
+    [Parameter, EditorRequired]
+    public EventCallback<char> OnSelectLetter { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback OnBackspace { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback OnSubmit { get; set; }
+
+    char[] row1 = new char[] { 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P' };
+    char[] row2 = new char[] { 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L' };
+    char[] row3 = new char[] { 'Z', 'X', 'C', 'V', 'B', 'N', 'M' };
+
+    private string GetState(char letter)
+    {
+        var guesses = Game.PreviousGuesses.SelectMany(g => g.LetterPositions);
+
+        if (guesses.Any(g => g.Letter == letter && g.Result == LetterPositionResult.Correct))
+            return "correct";
+        else if (guesses.Any(g => g.Letter == letter && g.Result == LetterPositionResult.Misplaced))
+            return "present";
+        else if (guesses.Any(g => g.Letter == letter))
+            return "absent";
+
+        return "empty";
+    }
+
+    private async Task GuessLetter(char letter) => await OnSelectLetter.InvokeAsync(letter);
+
+}

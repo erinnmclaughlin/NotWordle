@@ -1,0 +1,34 @@
+﻿<div class="row">
+    @if (GuessResult != null)
+    {
+        foreach (var lp in GuessResult.LetterPositions)
+        {
+            <div class="tile" data-state="@GetState(lp)">
+                @lp.Letter
+            </div>
+        }
+
+    }
+    else
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            <div class="tile" data-state="empty"></div>
+        }
+    }
+</div>
+
+@code {
+
+    [Parameter] public GuessResult? GuessResult { get; set; }
+
+    private string GetState(LetterPosition lp)
+    {
+        return lp.Result switch
+        {
+            LetterPositionResult.Correct => "correct",
+            LetterPositionResult.Misplaced => "present",
+            _ => "absent"
+        };
+    }
+}

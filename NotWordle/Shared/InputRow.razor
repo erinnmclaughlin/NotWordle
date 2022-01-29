@@ -1,0 +1,20 @@
+﻿ <div class="row">
+    @for (int i = 0; i < 5; i++)
+    {
+        var letter = Guess.ElementAtOrDefault(i);
+
+        if (letter == default)
+        {                        
+            <div class="tile" data-state="empty"></div>
+        }
+        else
+        {
+            <div class="tile" data-state="empty">@letter</div>
+        }
+    }
+</div>
+
+@code {
+
+    [Parameter, EditorRequired] public string Guess { get; set; } = "";
+}

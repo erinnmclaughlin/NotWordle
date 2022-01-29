@@ -1,0 +1,87 @@
+﻿@page "/"
+
+<PageTitle>Index</PageTitle>
+
+<div id="game" tabindex="0" @onkeyup="HandleKeyUp" autofocus>
+    <header>
+        <div class="title"> NOT WORDLE </div>
+    </header>
+    <div id="board-container">
+        <div id="board" style="width: 350px; height: 420px;">
+            @foreach (var guess in GameManager.PreviousGuesses)
+            {
+                <GuessRow GuessResult="guess" />
+            }
+
+            @if (GameManager.IsCorrect == false || GameManager.GameOver == false)
+            {
+               <InputRow Guess="@Guess.Value" />
+            }
+            
+
+            @for (int i = 1; i < GameManager.GuessesLeft; i++)
+            {
+                <GuessRow />
+            }
+        </div>
+    </div>
+    
+    <Keyboard Game="GameManager"
+              OnBackspace="HandleBackspace"
+              OnSelectLetter="HandleAddLetter"
+              OnSubmit="GuessWord" />
+</div>
+
+@code {
+
+    private GameManager GameManager { get; set; } = GameManager.NewGame();
+    private Guess Guess { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ResetGame();
+        await base.OnInitializedAsync();
+    }
+
+    private string GetColor(LetterPosition lp) => lp.Result switch
+    {
+        LetterPositionResult.Correct => "green",
+        LetterPositionResult.Misplaced => "orange",
+        _ => "black"
+    };
+
+    private void GuessWord()
+    {
+        if (Guess.Value.Length != 5) return;
+
+        if (GameManager.MakeGuess(Guess.Value))
+            Guess = new();
+    }
+
+    private void HandleAddLetter(char letter)
+    {
+        if (Guess.Value.Length == 5)
+            return;
+
+        Guess.Value += letter;
+    }
+
+    private void HandleBackspace()
+    {
+        if (Guess.Value.Length == 0) return;
+
+        Guess.Value = Guess.Value.Substring(0, Guess.Value.Length - 1);
+    }
+
+    private void HandleKeyUp(KeyboardEventArgs args)
+    {
+        if (args.Code == "Backspace")
+            HandleBackspace();
+        else if (args.Code == "Enter" || args.Code == "NumpadEnter")
+            GuessWord();
+        else
+            HandleAddLetter(args.Key[0]);
+    }
+
+    private void ResetGame() => GameManager = GameManager.NewGame();
+}
