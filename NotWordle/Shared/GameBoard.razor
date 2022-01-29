@@ -1,9 +1,9 @@
 ﻿<div id="board-container">
     <div id="board" style="width: 350px; height: 420px;">
 
-        @for (int i = 0; i < GameManager.MaxGuesses; i++)
+        @for (int i = 0; i < Game.MaxGuesses; i++)
         {
-            if (i == GameManager.GuessCount)
+            if (i == Game.GuessCount)
             {
                 <InputRow Guess="@Guess" />
             }
@@ -19,14 +19,14 @@
 @code {
 
     [CascadingParameter, EditorRequired]
-    public GameManager GameManager { get; set; } = null!;
+    public Game Game { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public string Guess { get; set; } = "";
 
     private GuessResult? GetResult(int index)
     {
-        var previousGuess = GameManager.PreviousGuesses.ElementAtOrDefault(index);
+        var previousGuess = Game.PreviousGuesses.ElementAtOrDefault(index);
         return previousGuess == default ? null : previousGuess;
     }
 

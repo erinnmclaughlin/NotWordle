@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using System.ComponentModel.DataAnnotations
 
 <PageTitle>Not Wordle</PageTitle>
 
@@ -7,8 +8,8 @@
         <div class="title"> NOT WORDLE </div>
     </header>
 
-    <CascadingValue Value="GameManager">
-        <GameBoard Guess="@Guess.Value" />        
+    <CascadingValue Value="Game">
+        <GameBoard Guess="@Guess" />        
         <Keyboard OnBackspace="HandleBackspace"
                   OnSelectLetter="HandleAddLetter"
                   OnSubmit="GuessWord" />
@@ -18,45 +19,33 @@
 
 @code {
 
-    private GameManager GameManager { get; set; } = GameManager.NewGame();
-    private Guess Guess { get; set; } = new();
+    private Game Game { get; set; } = Game.NewGame();
 
-    protected override async Task OnInitializedAsync()
-    {
-        ResetGame();
-        await base.OnInitializedAsync();
-    }
-
-    private string GetColor(LetterPosition lp) => lp.Result switch
-    {
-        LetterPositionResult.Correct => "green",
-        LetterPositionResult.Misplaced => "orange",
-        _ => "black"
-    };
+    [Required, MaxLength(5), MinLength(5)]
+    public string Guess { get; set; } = "";
 
     private void GuessWord()
     {
-        if (Guess.Value.Length != 5) return;
+        if (!Words.IsValid(Guess))
+            return;
 
-        var validWord = GameManager.MakeGuess(Guess.Value);
-
-        if (validWord)
-            Guess = new();
+        Game.MakeGuess(Guess);
+        Guess = string.Empty;
     }
 
     private void HandleAddLetter(char letter)
     {
-        if (Guess.Value.Length == 5)
+        if (Guess.Length == 5)
             return;
 
-        Guess.Value += letter;
+        Guess += letter;
     }
 
     private void HandleBackspace()
     {
-        if (Guess.Value.Length == 0) return;
+        if (Guess.Length == 0) return;
 
-        Guess.Value = Guess.Value.Substring(0, Guess.Value.Length - 1);
+        Guess = Guess.Substring(0, Guess.Length - 1);
     }
 
     private void HandleKeyUp(KeyboardEventArgs args)
@@ -68,6 +57,4 @@
         else
             HandleAddLetter(args.Key[0]);
     }
-
-    private void ResetGame() => GameManager = GameManager.NewGame();
 }

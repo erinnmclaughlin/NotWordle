@@ -30,7 +30,7 @@
 @code {
 
     [CascadingParameter, EditorRequired] 
-    public GameManager Game { get; set; } = null!;
+    public Game Game { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public EventCallback<char> OnSelectLetter { get; set; }
