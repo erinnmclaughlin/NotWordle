@@ -3,7 +3,7 @@
 
         @for (int i = 0; i < Game.MaxGuesses; i++)
         {
-            if (i == Game.GuessCount)
+            if (i == Game.PreviousGuesses.Count)
             {
                 <InputRow Guess="@Guess" />
             }

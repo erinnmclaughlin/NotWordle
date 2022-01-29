@@ -3,9 +3,7 @@
 public class Game
 {
     private string Word { get; }
-
-    public int GuessCount { get; private set; }
-    public int MaxGuesses { get; private set; } = 6;
+    public int MaxGuesses { get; } = 6;
 
     public List<GuessResult> PreviousGuesses { get; } = new();
 
@@ -26,7 +24,6 @@ public class Game
 
         var result = GetResult(guess);
         PreviousGuesses.Add(result);
-        GuessCount++;
     }
 
     private GuessResult GetResult(string guess)
