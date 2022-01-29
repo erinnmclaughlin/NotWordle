@@ -1,35 +1,19 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Not Wordle</PageTitle>
 
 <div id="game" tabindex="0" @onkeyup="HandleKeyUp" autofocus>
     <header>
         <div class="title"> NOT WORDLE </div>
     </header>
-    <div id="board-container">
-        <div id="board" style="width: 350px; height: 420px;">
-            @foreach (var guess in GameManager.PreviousGuesses)
-            {
-                <GuessRow GuessResult="guess" />
-            }
 
-            @if (GameManager.GuessesLeft != 0)
-            {
-               <InputRow Guess="@Guess.Value" />
-            }
-            
-
-            @for (int i = 1; i < GameManager.GuessesLeft; i++)
-            {
-                <GuessRow />
-            }
-        </div>
-    </div>
+    <CascadingValue Value="GameManager">
+        <GameBoard Guess="@Guess.Value" />        
+        <Keyboard OnBackspace="HandleBackspace"
+                  OnSelectLetter="HandleAddLetter"
+                  OnSubmit="GuessWord" />
+    </CascadingValue>
     
-    <Keyboard Game="GameManager"
-              OnBackspace="HandleBackspace"
-              OnSelectLetter="HandleAddLetter"
-              OnSubmit="GuessWord" />
 </div>
 
 @code {

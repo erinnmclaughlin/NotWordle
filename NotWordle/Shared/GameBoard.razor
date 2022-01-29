@@ -1,0 +1,34 @@
+﻿<div id="board-container">
+    <div id="board" style="width: 350px; height: 420px;">
+
+        @for (int i = 0; i < GameManager.MaxGuesses; i++)
+        {
+            if (i == GameManager.GuessCount)
+            {
+                <InputRow Guess="@Guess" />
+            }
+            else
+            {
+                <GuessRow GuessResult="@GetResult(i)" />
+            }
+        }
+
+    </div>
+</div>
+
+@code {
+
+    [CascadingParameter, EditorRequired]
+    public GameManager GameManager { get; set; } = null!;
+
+    [Parameter, EditorRequired]
+    public string Guess { get; set; } = "";
+
+    private GuessResult? GetResult(int index)
+    {
+        var previousGuess = GameManager.PreviousGuesses.ElementAtOrDefault(index);
+        return previousGuess == default ? null : previousGuess;
+    }
+
+
+}
